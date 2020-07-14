@@ -6,127 +6,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-
-/**
- * Class CatNode
- * @package App\Command
- */
-class CatNode
-{
-
-    protected $id;
-    protected $parent_id;
-    protected $title;
-    protected $childrens;
-
-    public static $currentLevel;
-
-    /**
-     * CatNode constructor.
-     * @param array|null $data
-     */
-    public function __construct(array $data = null)
-    {
-        if (!is_null($data)) {
-            $this->id = (int)$data[0];
-            $this->parent_id = (int)$data[1];
-            $this->title = trim(preg_replace('/\s+/', ' ', $data[2]));
-        }
-    }
-
-    /**
-     * @param CatNode $node
-     */
-    public function addNode(CatNode $node)
-    {
-        if ($this->id == $node->parent_id) {
-            $this->childrens[] = $node;
-        } else {
-            $parent = $this->findNodeById($this, $node->parent_id);
-            if (!is_null($parent)) {
-                $parent->addChildren($node);
-            }
-        }
-    }
-
-    /**
-     * @param CatNode $pNode
-     * @param $nodeId
-     * @return mixed|null
-     */
-    public function findNodeById(CatNode $pNode, $nodeId)
-    {
-        $node = null;
-
-        foreach ($pNode->childrens as $childrenNode) {
-            if ($childrenNode->getId() == $nodeId) {
-                $node = $childrenNode;
-            } else {
-                if (is_array($childrenNode->getChildrens()) && count($childrenNode->getChildrens())) {
-                    $node = $this->findNodeById($childrenNode, $nodeId);
-                }
-            }
-        }
-        return $node;
-    }
-
-    /**
-     * @param CatNode $tree
-     */
-    public function print(CatNode $tree)
-    {
-        $prefix = '';
-        $prefix .= str_repeat('-', CatNode::$currentLevel);
-        echo $prefix . $tree->getTitle() . "\n";
-        if (is_array($tree->getChildrens())) {
-            foreach ($tree->getChildrens() as $childrenNode) {
-                CatNode::$currentLevel++;
-                $this->print($childrenNode);
-            }
-        }
-        CatNode::$currentLevel--;
-    }
-
-    /**
-     * @return int
-     */
-    public function getParentId()
-    {
-        return $this->parent_id;
-    }
-
-    /**
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param CatNode $node
-     */
-    public function addChildren(CatNode $node)
-    {
-        $this->childrens[] = $node;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getChildrens()
-    {
-        return $this->childrens;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-}
+use App\DataStructures\CatNode;
 
 /**
  * Class ParseCatalogCommand
@@ -166,7 +46,7 @@ class ParseCatalogCommand extends Command
             fclose($file_handle);
 
             CatNode::$currentLevel = 0;
-            $catalogTree->print($catalogTree);
+            $catalogTree->print($catalogTree,0);
 
             return Command::SUCCESS;
         } else {
