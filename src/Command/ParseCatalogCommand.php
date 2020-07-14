@@ -59,8 +59,4 @@ class ParseCatalogCommand extends Command
             return Command::FAILURE;
         }
     }
-
-    function grade_sort($x, $y) {
-        return ($x['grade'] < $y['grade']);
-    }
 }
