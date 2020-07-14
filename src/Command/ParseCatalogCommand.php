@@ -35,22 +35,32 @@ class ParseCatalogCommand extends Command
         if (!is_null($filename)) {
             $file_handle = fopen($filename, "r");
             $catalogTree = new CatNode([0, null, 'Catalog']);
-
+            $dataForCatalog = [];
             while (!feof($file_handle)) {
                 $line = fgets($file_handle);
                 if (strlen($line)) {
                     $nodeInfo = explode('|', $line);
-                    $catalogTree->addNode(new CatNode($nodeInfo));
+                    $dataForCatalog[] = $nodeInfo;
                 }
             }
             fclose($file_handle);
 
-            CatNode::$currentLevel = 0;
+            uasort($dataForCatalog, function ($x,$y){
+                return ($x['1'] > $y['1']);
+            });
+
+            foreach ($dataForCatalog as $nodeInfo){
+                $catalogTree->addNode(new CatNode($nodeInfo));
+            }
             $catalogTree->print($catalogTree,0);
 
             return Command::SUCCESS;
         } else {
             return Command::FAILURE;
         }
+    }
+
+    function grade_sort($x, $y) {
+        return ($x['grade'] < $y['grade']);
     }
 }

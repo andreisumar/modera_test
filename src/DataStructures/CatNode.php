@@ -52,8 +52,9 @@ class CatNode
         foreach ($pNode->children as $childrenNode) {
             if ($childrenNode->getId() == $nodeId) {
                 $node = $childrenNode;
+                return $node;
             } else {
-                if (is_array($childrenNode->getchildren()) && count($childrenNode->getchildren())) {
+                if (is_null($node) && is_array($childrenNode->getchildren()) && count($childrenNode->getchildren())) {
                     $node = $this->findNodeById($childrenNode, $nodeId);
                 }
             }
