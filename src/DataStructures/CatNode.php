@@ -33,7 +33,7 @@ class CatNode
         if ($this->id == $node->parent_id) {
             $this->children[] = $node;
         } else {
-            $parent = $this->findNodeById($this, $node->parent_id);
+            $parent = CatNode::findNodeById($this, $node->parent_id);
             if (!is_null($parent)) {
                 $parent->addChildren($node);
             }
@@ -45,7 +45,7 @@ class CatNode
      * @param $nodeId
      * @return mixed|null
      */
-    public function findNodeById(CatNode $pNode, $nodeId)
+    public static function findNodeById(CatNode $pNode, $nodeId)
     {
         $node = null;
 
@@ -55,7 +55,7 @@ class CatNode
                 return $node;
             } else {
                 if (is_null($node) && is_array($childrenNode->getchildren()) && count($childrenNode->getchildren())) {
-                    $node = $this->findNodeById($childrenNode, $nodeId);
+                    $node = CatNode::findNodeById($childrenNode, $nodeId);
                 }
             }
         }
